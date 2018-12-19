@@ -1,0 +1,55 @@
+---
+title: "Taiwan_Job"
+author: '9913661'
+date: "16/12/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+install.packages("ggplot2")
+```
+```{r}
+Average_101 <- read.csv("/Users/lexi/Documents/DataAnalysis/Taiwan_Job/101年_青年勞工現職工作平均每月薪資.csv")
+Average_103 <- read.csv("/Users/lexi/Documents/DataAnalysis/Taiwan_Job/103年_青年勞工現職工作平均每月薪資.csv")
+Average_105 <- read.csv("/Users/lexi/Documents/DataAnalysis/Taiwan_Job/105年_青年勞工現職工作平均每月薪資.csv")
+```
+
+```{r}
+Average_101_M <- Average_101[1,13]
+Average_101_F <- Average_101[2,13]
+
+Average_103_M <- Average_103[1,13]
+Average_103_F <- Average_103[2,13]
+
+Average_105_M <- Average_105[1,12]
+Average_105_F <- Average_105[2,12]
+
+M_Average <- c(Average_101_M, Average_103_M, Average_105_M)
+F_Average <- c(Average_101_F, Average_103_F, Average_105_F)
+
+Total_Average <- c(M_Average, F_Average)
+```
+```{r}
+library(ggplot2)
+dat <- data.frame(
+  Sex = factor(c("Male", "Male", "Male", "Female", "Female", "Female")),
+  Year = factor(c("2012","2014","2016"), levels=c("2012","2014","2016")),
+  Average = Total_Average
+)
+dat
+
+ggplot(data=dat, aes(x=Year, y=Average, group=Sex, colour=Sex)) +
+    geom_line()
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
