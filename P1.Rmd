@@ -1,0 +1,435 @@
+---
+title: 'IFN509: Data Manipulation -- Week 6 Lab'
+output:
+  html_notebook: default
+  pdf_document: default
+---
+
+###### version 1.0 --- Dr Guido Zuccon, @guidozuccon-lecturer & Harrisen Scells, @harryscells-tutor
+
+**Driving question:** *Introduction to R and Rstudio*
+
+---
+
+# Introduction
+
+So far in this unit, you have been provided with a pdf file for the lab and tutorial sessions. We have written these documents in a format called markdown. Markdown allows us to represent documents as plain text and have another program render the content. Think of a markdown file as a HTML file. With HTML documents, the file contains the instructions for how the content of a document should be presented, and a web browser presents it (renders the HTML instructions). Markdown is similar, except it aims to be readable if it is being rendered for instance by a web browser or converted to a PDF file and be readable in plain text. In addition it has a very simple and intuitive syntax. This file is special when you open it in R studio, as it contains specific formatting that allows you to execute R code. Have a look at the R Markdown cheatsheet that we have put in the Blackboard folder for this tutorial to know more about the R Markdown workflow.
+
+
+As seen in the lecture, R Studio has four panels. The first is the one you are hopefully reading from right now. This is your sandbox to type R code and see the results; its main aim is to provide functionalities to view and edit R scripts. Below the first panel is the console. You can type R code into it to see the effect. To the upper right, you have environment and history tabs. The environment shows you all the values that are stored in the memory of the current R session. In the bottom right are more tabs: these include one that displays the help, one that displays the plots, another that allows to manage (i.e. load) packages, etc.
+
+If you have never programmed before that is okay! Take this as an opportunity to learn a valuable skill that is guaranteed to be applicable to you someday - and remember you've already been programming in SQL and `bash`. If you have programmed before and you think R is not for you, remember that R is a tool for data analysis and you can do things with it that you can't *easily* do in other languages.
+
+Before we start: if there is any command you feel needs more explanation, in the console, you can type `?"query"`, where "query" is any word or symbol in R. The explaination will show in the bottom right tab under "Help". Think of this as the `man` pages for R. For instance, the first exercise covers `+`, which adds two numbers together. If you want an explaination about it, you can type `?"+"` into the console. Try it out so you become familiar with doing so. Another way to get to the help is by using the function `help()`, and passing as argument the R command you want help with.
+
+Remember that this that you are reading is an *interactive* document (this is also why we are not giving you print outs of this document). You can edit anything! If you make a mistake, just undo it - you can't break anything. We encourage you to experiment and try things to get a better understanding of R. 
+
+# Exercise 1: Basic R Syntax
+
+Firstly, we will cover some basic syntax.
+
+```{r}
+# `#` begins a comment (just like in bash).
+# `;` or newline separates commands.
+
+# you can store values in variables using the <- syntax:
+x <- 10
+y <- 2
+
+# you can also type infix mathematical expressions:
+x + y
+```
+
+Try executing the above chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Control+Shift+Enter*. You can also run individual lines with *Control+Enter*. (If you are on a mac this will be *Cmd+Enter*.) You will notice that the output of the above command is $12$. Run the following chunk to see the effect.
+
+```{r}
+x + y # addition
+x - y #
+x * y #
+x / y #
+```
+
+Complete the comments in the above chunk for what each operator is doing.
+
+R also has some data types that you should become familiar with. For logical values, there is:
+
+```{r}
+TRUE
+FALSE
+NA
+```
+
+`NA` means "not available" and will show up in your data when R does not have a value for something.
+
+You have seen numbers and logical values, and finally, the other most basic data type is the string (characters):
+
+```{r}
+"A string is surrounded by double quotes"
+'or single quotes!'
+
+# you can assign any value to a variable
+hello <- "hello"
+world <- "world"
+```
+
+# Exercise 2: Vectors
+
+The atomic vector is the simplest data structure in R; vectors are created using the function `c()`. Atomic vectors are linear vectors of a single data type. R will try to convert all the values you pass to `c()` to the same type. Execute the following chunk to create a vector.
+
+```{r}
+# c() is a function that concatenates the values you pass to it.
+vec <- c(50, 29, 11, 93)
+
+vec
+```
+
+We can also index our vector to get individual items from it. **All indexing in R is base-one. No error is thrown if you try to index the 0th item of a vector.**
+
+```{r}
+vec[0] # the type of the vector.
+vec[1] # vec[1] is 50.
+vec[2] # vec[2] is 
+vec[3] # vec[3] is 
+vec[4] # vec[4] is
+```
+
+Execute the above chunk and complete the comments.
+
+# Exercise 3: Factors
+
+So far, we have seen vectors that represent a collection of values of the same type. For statistical reasons, we would like to record categorical values also. An R factor is simply a vector that also records the distinct values in the vector (known as levels).
+
+for example:
+
+```{r}
+vec <- c(6, 3, 2, 3)
+# Create a factor from our vector
+vecf <- factor(vec)
+vecf
+```
+
+2, 3 and 6 are distict in vec.
+
+```{r}
+# Inspect the human-readable (string) version of the factor:
+str(vecf)
+
+# Get the index of the values in the factor, meaning:
+# values 6 3 2 3
+# index  3 2 1 2
+unclass(vecf)
+
+# If instead we just want the levels of the factor, we can use levels:
+levels(vecf)
+```
+
+A more concrete example of factors could be this example. Imagine this be a column in some data about a survey of both males and females.
+
+```{r}
+
+people <- c("male", "male", "female", "male", "female", "female", "male", "male", "male", "male", "female", "female")
+peoplef <- factor(people)
+
+# Now what do we have?
+str(peoplef)
+
+# What are the unique values?
+levels(peoplef)
+
+# What is the distribution of males to females?
+table(peoplef)
+```
+
+How about plotting this data? (more on plotting later)
+```{r}
+# plot(factor) => ?????????Bar chart
+plot(peoplef)
+```
+
+# Exercise 4: Functions
+
+A function lets you modularise your code so you don't have to repeat yourself. The following example is a trivial function called `inc` that increases any number you give it by one. Run the following chunk and play around with it in the console. An example of using the function is `inc(1)`.
+
+```{r}
+inc <- function(x) {
+  x + 1
+}
+```
+
+The syntax of the code above is as follows:
+
+ - `function(x)` is the function *signature*, it defines how many arguments are needed.
+ - `inc <- function(x)` is *assigning* the name `inc` to the function.
+ -  `x + 1` increases the argument `x` by 1 and `returns` it. Everything between the curly braces is executed by the function. It is indented for clarity.
+ 
+## Homework Exercise
+
+Write a function called `square` with the signature `function(x)`. This function takes a number and squares it.
+```{r}
+square <- function(x)
+{
+  x^2
+}
+
+square(2)
+```
+
+# Exercise 5: Conditionals and Loops
+
+R has several control flow constructs. For instance, let's look at a function that uses two very common control flow operators: `if` and `for`. The `if` expression lets us logically test a condition. The `for` expression operates in the same way you have seen in `bash`. Examine the snippet of code below. Ignore the `is_even` function for now, and instead take a look at `filter_even`. Run the chunk below to get an understanding of what the function is doing. Underneath the function definition we call the function with a vector of numbers. Inside the function definition for `filter_even`, there are empty comments. For each comment labelled 1-5, write a short description of what the line of code underneath it is doing.
+
+```{r}
+# The %% is the modulous operator, it returns the remainder of a division.
+is_even <- function(n) {
+  return(n %% 2 == 0)
+}
+
+# Given a list `l` of numbers, return only the even numbers.
+filter_even <- function(l) {
+  # (1)
+  new_vec <- c()
+  
+  # (2)
+  for (value in l) {
+    # (3)
+    if (is_even(value)) {
+      # (4)
+      new_vec <- append(new_vec, value)
+    }
+  }
+  
+  # (5)
+  return(new_vec)
+}
+
+# send a vector into
+filter_even(c(1,2,3,4))
+```
+
+# Exercise 6: Data Frames
+
+Enough general programming for now; lets move onto a core data structure in R: data frames. Data frames are a useful structure for handling tabular data. This week we will explore some of the data that is built into R for sandboxing. R does have functionality to read from a file, and you saw this in the lecture and is used in this week's tutorial (if you really want to explore a file in your own time look at `?"read.table"`).
+
+Execute the following chunk.
+
+```{r}
+iris
+```
+ 
+Examine the output. What you are looking at is a data frame that is stored by default in R! The iris dataset comprises measurements of three different species of iris flower. We can programmatically access the data frame too:
+ 
+```{r}
+# Assign the dataset to the variable i 
+i <- iris
+
+# Get the names of the frame, name means columns
+names(i)
+
+# Get the data from a single column
+i$Sepal.Length
+
+# Index a row in a column
+i$Sepal.Length[10]
+
+# Index a row-column
+i[10,1]
+```
+ 
+Notice how `i` became available in the Environment tab on the right? Clicking it let's us look at the tabular data in a "pretty-fied" representation.
+
+R makes it very easy to plot data as well. Using the `plot` function, we can look at the relationship between the petal length and petal width values for the iris flowers:
+
+```{r}
+# use dataset rather than vector => ?????????Bitmap
+plot(i$Petal.Length, i$Petal.Width)
+```
+
+This plot isn't very useful because we have three classes of flower, and we are unable to see this from the above plot.
+
+With some playing around with the plotting functions (more details about how to do data visualisation in R will be given in week 7), you can create more meaningful plots:
+
+```{r}
+# The colours we would like to use for plotting (vector of colour)
+#palette(c("red", "green", "blue"))
+
+# use species to set up colour
+plot(i$Petal.Length, i$Petal.Width, col=factor(i$Species), xlab="Petal Length", ylab="Petal Width")
+legend(x="topleft", legend=levels(i$Species), col=unique(i$Species), pch=1)
+
+#factor(i$Species)
+#unique(i$Species)
+```
+
+What insight do you gain just by looking at this plot?
+
+```{answer}
+
+```
+
+
+## Homework Exercise:
+
+Use the code from above, but modify it to plot Sepal Length vs Sepal Width. 
+
+```{r}
+plot(i$Sepal.Length, i$Sepal.Width, col=factor(i$Species), xlab="Sepal Length", ylab="Sepal Width")
+legend(x="topleft", legend=levels(i$Species), col=unique(i$Species), pch=1)
+
+```
+
+When you have this plot, explain how it is different from the previous plot.
+
+```{answer}
+
+```
+
+## Filtering 
+
+Now that we know the basics for access data in a frame, let's manipulate it! Perhaps we are interested in the values of Sepal.Width that are less than 2.4:
+ 
+```{r}
+subset(i, i$Sepal.Width < 2.4)
+```
+
+We can use the `subset()` function for slicing the rows of our data. The second argument of subset is the condition to satisfy. Any number of *logical operators* can be combined, for instance:
+
+```{r}
+subset(i, i$Sepal.Length < 4.5 | (i$Petal.Length < 5 & i$Petal.Length > 4 ))
+```
+
+The logical operators `|` (OR) and `&` (AND) are combined to filter the data to rows where the Sepal.Length < 4.5 OR the Petal.Length is between 4 and 5.
+
+Can you filter the data to only rows that contain "setosa"? Replace the `TRUE` in the following chuck with an expression that fulfills this condition.
+
+```{r}
+subset(i, TRUE)
+```
+
+## Aggregating
+
+We can also aggregate data in a frame using the aggregate function. Run the following chunk to get an idea of the aggregation function.
+
+```{r}
+info <- aggregate(i$Sepal.Length, FUN=mean, by=list(Species = i$Species))
+```
+
+Can you plot this data?
+
+```{r}
+plot(info)
+```
+
+This is the equivalent to the the SQL statement `SELECT avg(Sepal.Length), Species FROM iris GROUP BY Species;`. In the console, execute `?"aggregate"` to learn about the arguments passed to this function.
+
+Given the SQL statement `SELECT sum(Petal.Length), Species FROM iris GROUP BY Species;`, can you complete the equivalent aggregate function in the chunk below?
+
+```{r}
+aggregate(i$Petal.Length, FUN=sum, by=list(Species=i$Species))
+```
+
+# Finishing Up
+
+If you made it up to here, great job! You have the knowledge and tools to do basic data manipulation in R. It will take some time to getting used to, but with time the syntax and semantics will become familiar. If you are still eager to learn more and play with R, there are plenty of standard datasets distributed with R (run `data()` in the console). You could even try some of the previous weeks exercises by loading up the csv files into a data frame and completing them in R (use the `read.table()` and `read.csv` functions; pay particular attention to headers).
+
+## Homework Exercise (Optional)
+
+R has a built-in function called `Filter`. This function, as an argument, takes another function. When a function takes another function as an argument, it is a "higher order" function. The function that you pass to `Filter` is called a *predicate function*. A predicate function only returns `TRUE` or `FALSE` given some input. The function `is_even` is a predicate function. Run the following code snippet to see the effect.
+
+```{r}
+# is_even is a predicate function, and it only return true/false
+Filter(is_even, c(1,2,3,4))
+```
+
+Now, we only have to think about defining the condition for filtering data on and not the process.
+
+```{r}
+is_odd <- function(x) {
+  # implementation here
+  result <- c()
+  for(value in x)
+  {
+    if(value %% 2 != 0)
+      result <- append(result, TRUE)
+    else
+      result <- append(result, FALSE)
+  }
+  
+  return (result)
+}
+is_even <- function(x) {
+  # implementation here
+  result <- c()
+  for(value in x)
+  {
+    if(value %% 2 == 0)
+      result <- append(result, TRUE)
+    else
+      result <- append(result, FALSE)
+  }
+  
+  return (result)
+}
+
+Filter(is_odd, c(1,2,3,4))
+```
+
+The homework exercise is to implement another predicate function `is_odd` in the chunk above.
+
+## Homework Exercise (Optional)
+
+Complete the previous exercise first.
+
+Filtering is one of three patterns for operating on sequences of data. The other two might be familiar to you as they are buzz words in data science: Map and Reduce. In your own time investigate each of these patterns and find out how they work and what they are useful for. Start by reading the Wikipedia page for MapReduce: https://en.wikipedia.org/wiki/MapReduce (read sections 2 and 3 in that page)s.
+You have already implemented filter_even, so how would you modify it to implement your own version of `Filter`?
+
+```{r}
+# f is the function you pass and x is your vector
+my_filter <- function(f, x) {
+  # implementation here
+  result <- c()
+  for(value in x)
+  {
+    if(f(value))
+      result <- append(result, value)
+  }
+  
+  return (result)
+}
+
+my_filter(is_even, c(1,2,3,4))
+```
+
+If you are feeling extra brave, can you also implement these functions?
+
+```{r}
+my_map <- function(f, x) {
+  # implementation here
+  result <- c()
+  for(value in x)
+  {
+    if(f(value))
+      result <- append(result, value)
+  }
+  
+  return (result)
+}
+
+my_reduce <- function(f, x) {
+  # implementation here
+  result <- c()
+  for(value in x)
+  {
+    if(f(value))
+      result <- append(result, value)
+  }
+  
+  return (result)
+}
+
+my_map(inc, c(1,2,3,4)) # answer should be (2,3,4,5)
+my_reduce(sum, c(1,2,3,4)) # answer should be 10
+```
+
+
+
+
