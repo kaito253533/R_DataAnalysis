@@ -23,10 +23,10 @@ library(reshape2)
 Read CSV file by read.csv and show the plots by plot function.
 ```{r}
 # Use this space to load the data frames (i.e. put the data frame load instruction below):
-q1 <- read.csv("/Users/lexi/Documents/QUT/S1/IFN 509/quartet_data/quartet1.csv")
-q2 <- read.csv("/Users/lexi/Documents/QUT/S1/IFN 509/quartet_data/quartet2.csv")
-q3 <- read.csv("/Users/lexi/Documents/QUT/S1/IFN 509/quartet_data/quartet3.csv")
-q4 <- read.csv("/Users/lexi/Documents/QUT/S1/IFN 509/quartet_data/quartet4.csv")
+q1 <- read.csv("Practice/quartet_data/quartet1.csv")
+q2 <- read.csv("Practice/quartet_data/quartet2.csv")
+q3 <- read.csv("Practice/quartet_data/quartet3.csv")
+q4 <- read.csv("Practice/quartet_data/quartet4.csv")
 # Display all four plots in the same window (You don't need to know this)
 par(mfrow=c(2,2))
 
@@ -40,7 +40,7 @@ plot(q4)
 # Exercise 2: Plotting from a CSV file
 Read the rent.csv, it contains the rent price of each types of houses in Au.
 ```{r}
-rent <- read.csv("/Users/lexi/Documents/QUT/S1/IFN 509/archive/rent.csv")
+rent <- read.csv("Practice/archive/rent.csv")
 ```
 
 Use summary function to show the summary info of data.
@@ -90,10 +90,10 @@ Use ggplot2 to show the charts.
 # Re-do exercise 1 here
 library(ggplot2)
 library(reshape2)
-q1 <- read.csv("/Users/lexi/Documents/QUT/S1/IFN 509/quartet_data/quartet1.csv", col.names = c("x", "y", "A"))
-q2 <- read.csv("/Users/lexi/Documents/QUT/S1/IFN 509/quartet_data/quartet2.csv", col.names = c("x", "y", "B"))
-q3 <- read.csv("/Users/lexi/Documents/QUT/S1/IFN 509/quartet_data/quartet3.csv", col.names = c("x", "y", "C"))
-q4 <- read.csv("/Users/lexi/Documents/QUT/S1/IFN 509/quartet_data/quartet4.csv", col.names = c("x", "y", "D"))
+q1 <- read.csv("Practice/quartet_data/quartet1.csv", col.names = c("x", "y", "A"))
+q2 <- read.csv("Practice/quartet_data/quartet2.csv", col.names = c("x", "y", "B"))
+q3 <- read.csv("Practice/quartet_data/quartet3.csv", col.names = c("x", "y", "C"))
+q4 <- read.csv("Practice/quartet_data/quartet4.csv", col.names = c("x", "y", "D"))
 
 #多個col轉成一個col, 留下Ａ？
 m1 <- melt(q1, measure.vars = "A")

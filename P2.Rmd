@@ -1,0 +1,108 @@
+---
+title: 'IFN509: Data Manipulation -- Week 8 Lab (Part II)'
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+# Exercise 1: Installing packages and cleaning the data
+```{r install libraries}
+# Use this space to install your libraries.
+devtools::install_github("dkahle/ggmap")
+```
+
+```{r load and clean data}
+# Use this space to load and clean the data.
+# 1. Ensure there are no 0 values for latitude and longitude.
+# 2. Ensure the year value is not NA, is less than or equal to 2016 and larger than 1800.
+# 3. Ensure that no mass values are NA.
+landings <- read.csv("Practice/meteorite-landings.csv")
+landings <- landings[landings$reclat != 0,]
+landings <- landings[landings$reclong != 0,]
+
+landings <- landings[!is.na(landings$year),]
+landings <- landings[landings$year > 1800,]
+landings <- landings[landings$year <= 2016,]
+
+landings <- landings[!is.na(landings$mass),]
+
+```
+
+# Exercise 2: Meteorite landing statistics
+
+```{r statistics exercises}
+# How many records are there?
+num_records <- nrow(landings)
+sprintf("The number of records: %i", num_records)
+
+# How many classes of meteorite are there?
+num_classes <- length(unique(landings$recclass))
+sprintf("The number of the classes of meteorite: %i", num_classes)
+
+# What are the minimum and maximum values for year and mass?
+min_year <- min(landings$year)
+max_year <- max(landings$year)
+min_mass <- min(landings$mass)
+max_mass <- max(landings$mass)
+
+cat("min of year: ", min_year, "\n")
+cat("max of year: ", max_year, "\n")
+cat("min of mass: ", min_mass, "\n")
+cat("max of mass: ", max_mass, "\n")
+
+# What is the standard deviation, mean, and median values for the year and mass?
+sd_year <- sd(landings$year)
+sd_mass <- sd(landings$mass)
+sprintf("standard deviation of year: %.2f", sd_year)
+sprintf("standard deviation of mass: %.2f", sd_mass)
+
+mean_year <- mean(landings$year)
+mean_mass <- mean(landings$mass)
+sprintf("mean of year: %.2f", mean_year)
+sprintf("mean of mass: %.2f", mean_mass)
+
+median_year <- median(landings$year)
+median_mass <- median(landings$mass)
+sprintf("median of year: %i", median_year)
+sprintf("median of mass: %i", median_mass)
+```
+
+# Exercise 3: Plotting meteorite landings
+
+Since the data contains geospacial data (latitude and longitude), we can plot this on a map. Let's explore the ggmap library. Write R code to visualise the meteorite landings in Australia using *red* points.
+
+```{r landings in Australia}
+library(ggmap)
+require(ggmap)
+register_google(key = "YOURKEY")
+map0 <- get_map(location ="Australia", zoom = 4)
+ggmap(map0) + geom_point(aes(x = landings$reclong, y = landings$reclat), data=landings, color="red")
+```
+
+
+```{r landings in Australia by mass and year}
+# Write your solution here.
+ggmap(map0) + geom_point(data=landings, aes(x = landings$reclong, y = landings$reclat, size = landings$mass, color=landings$year))
+```
+
+# Exercise 4: Density and heat map
+
+![Density plot](p1.png)
+
+```{r density of recorings the the US}
+# Write your solution here.
+ggmap(map1) + stat_density2d(aes(x = landings$reclong, y = landings$reclat), alpha=0.5, size=2, bins= 30, geom = "polygon", data=landings) +  geom_density_2d(data=landings, aes(x = landings$reclong, y = landings$reclat), alpha=0.5, bins= 30)
+```
+
+
+![Heat map](p2.png)
+
+```{r heat map of recorings the the US}
+# Write your solution here.
+map2 <- get_map(location ="USA", zoom = 4, maptype = "satellite")
+ggmap(map2) + stat_bin_2d(aes(x = landings$reclong, y = landings$reclat), size = .1, bins = 30, alpha = 0.8, data=landings)
+
+```
+
+
+
