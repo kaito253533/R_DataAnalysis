@@ -1,0 +1,241 @@
+---
+title: "Assignment 2 of IFN509"
+author: "9913661 - Wan-Lun, Lu"
+date: "20 May 2018"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+chooseCRANmirror(graphics=FALSE, ind=1)
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Installing packages
+```{r}
+install.packages("lubridate")
+install.packages("ggplot2")
+install.packages("ggmap")
+install.packages("dplyr")
+```
+# Using packages
+```{r}
+library(ggmap)
+library(ggplot2)
+library(lubridate)
+library(plyr)
+library(lsa)
+library(magrittr)
+library(dplyr)
+```
+# Reading csv file
+```{r}
+# Read csv file and put into variables
+d1 <- read.csv("Practice/pi2_data/uber-raw-data-apr14.csv")
+d2 <- read.csv("Practice/pi2_data/uber-raw-data-may14.csv")
+d3 <- read.csv("Practice/pi2_data/uber-raw-data-jun14.csv")
+d4 <- read.csv("Practice/pi2_data/uber-raw-data-jul14.csv")
+d5 <- read.csv("Practice/pi2_data/uber-raw-data-aug14.csv")
+d6 <- read.csv("Practice/pi2_data/uber-raw-data-sep14.csv")
+```
+
+# Task 1.1 - Data Manipulation
+```{r}
+# Combine all data into a variables 'data'
+data <- rbind(d1, d2, d3, d4, d5, d6)
+# Use mdy_hms function to transfer 'Date.Time' into date format
+date <- mdy_hms(data$Date.Time, tz="America/New_York")
+# Get the day of week value from date formate
+dt <- wday(date, label = TRUE)
+# Add a column 'day' into the original data set.
+data$day <- wday(date, label = TRUE)
+
+# Use table funtion to get frequency for every day of week
+result <- table(data$day)
+# Put the result into a data frame to estiblish a figure
+df_result <- data.frame(result)
+# Name the df_result.
+names(df_result) <- c("Day of Week", "Frequency")
+head(df_result)
+```
+# Task 1.1 - Figure
+```{r}
+# Use ggplot to initiate a figure, and  set the x axis and y axis. Use geom_bar to draw a bar chat on it, and also set x label and y label. Finally, use scale_fill_manual to fill the color, and set the title and subtitle, then adjust the x axis.
+theme_set(theme_classic())
+ggplot(df_result, aes(x=df_result$`Day of Week`, y=df_result$Frequency, fill=`Day of Week`)) + 
+  geom_bar(stat="identity", width=0.5) + 
+  xlab("Day of Week") + ylab("Total Amount") + 
+  scale_fill_manual(values=c("#26FFFF", "#00F0F0", "#00D6D6", "#00BDBD", "#00A3A3", "#008A8A", "#008585")) + 
+  labs(title="Task 1.1 Figure", subtitle="Frequency of Day of Week") + 
+  theme(axis.text.x = element_text(angle=65, vjust=0.6))
+```
+
+# Task 1.2 - Data Manipulation
+```{r}
+# Use month function to get the value from date, and add a new column into data set.
+data$month <- month(date)
+# Use table funtion to get frequency for month
+result_month <- table(data$month)
+# Put the result into a data frame
+df_result_month <- data.frame(result_month)
+# Name the data
+names(df_result_month) <- c("Month", "Frequency")
+head(df_result_month)
+```
+# Task 1.2 - Figure
+```{r}
+theme_set(theme_bw())
+# Use ggplot to initiate a figure, and  set the x axis and y axis. Use geom_line to draw a line chat on it, and also set x label and y label. In addition, Put the point by geom_point to show the exact point for each month. Finally, set the title and subtitle.
+ggplot(data=df_result_month, aes(x=df_result_month$Month, y=df_result_month$Frequency, group=1)) + 
+  geom_line(color="#00DDDD") + 
+  xlab("Month") + ylab("Total Amount") + 
+  geom_point(color="#0044BB") + 
+  labs(title="Task 1.2 Figure", subtitle="Frequency of Month")
+
+```
+
+# Task 1.3 - Data Manipulation
+```{r}
+# Use hour function to get the hour value from date.
+data$hour <- hour(date)
+# Use table function to calculate the frequency of each hour.
+result_hour <- table(data$hour)
+# Put the result into a data frame.
+df_result_hour <- data.frame(result_hour)
+# Name the result
+names(df_result_hour) <- c("Hour", "Frequency")
+head(df_result_hour)
+```
+# Task 1.3 - Figure
+```{r}
+# Use ggplot to initiate a figure, and  set the x axis and y axis. Use geom_bar to draw a bar chat on it, and also set x label and y label. In addition, change the width if bars. Finally, set the title and subtitle.
+ggplot(df_result_hour, aes(x=df_result_hour$Hour, y=df_result_hour$Frequency, fill=Hour)) + 
+  geom_bar(stat="identity", width=0.5 ) + 
+  xlab("Hour of day") + ylab("Total Amount") + 
+  labs(title="Task 1.3 Figure", subtitle="Frequency of Hour")
+```
+
+# Task 2.0 - Point Plots
+```{r}
+# Because of the efficacy of laptop, I just use April data to establish this figure
+data_map <- d1
+# Use get_map function to initiate a map with zoom = 8, for showing the clearer result, although there is a missing value.
+map0 <- get_map(location ="NewYork", zoom = 8)
+# Put all data on the map in terms of longitude and latitude. 
+ggmap(map0) + 
+  geom_point(aes(x = data_map$Lon, y = data_map$Lat), data=data_map, color="#77DDFF", size=1) + 
+  labs(title="Task 2.0 Figure", subtitle="Uber Pick Up Location")
+```
+
+# Task 2.0 - Density Plot
+```{r}
+# Use get_map function to initiate a map with zoom = 13, for showing the clearer result, although there is some missing values.
+map1 <- get_map(location ="NewYork", zoom = 13)
+# Use geom_density2d function to draw a density plot on the map.
+ggmap(map1) + geom_density2d(data = data_map, aes(x = data_map$Lon, y = data_map$Lat)) +
+   stat_density2d(data = data_map, aes(x = data_map$Lon, y = data_map$Lat, fill = 4, alpha = 4),
+                  size = 0.01, bins = 16, geom = 'polygon') +
+   scale_fill_gradient(low = "green", high = "red") +
+   scale_alpha(range = c(0.00, 0.25), guide = FALSE) +
+   labs(title="Task 2.0 Figure", subtitle="Uber Pick Up Location") +
+   theme(legend.position = "none", axis.title = element_blank(), text = element_text(size = 12))
+```
+# Task 2.1 - Data Manipulation
+```{r}
+# Transfer the date column which is text format into date format.
+date_map <- mdy_hms(data_map$Date.Time, tz="America/New_York")
+# Add a column called day into the data set.
+data_map$day <- wday(date_map, label = TRUE)
+head(data_map)
+```
+
+# Task 2.1 - Figure
+```{r}
+# Use get_map function to initiate a map with zoom = 10, for showing the clearer result, although there is some missing values.
+map_month <- get_map(location ="NewYork", zoom = 10)
+# Use geom_point function to put points in the map, and use facet_wrap function to establish 7 figures to seperate the map into different day of week.
+ggmap(map_month) + 
+  geom_point(data=data_map, aes(x = data_map$Lon, y = data_map$Lat), color="#77DDFF", size=0.1) + 
+  facet_wrap(~day, ncol = 4) + 
+  labs(title="Task 2.1 Figure", subtitle="Uber Pick Up Location in Different Days")
+```
+
+#Task 2.2 - Data Manipulation
+```{r}
+# Combine three months into a data set.
+data_map_month <- rbind(d1, d2, d3)
+# Transfer the column which contains the date text into the date format.
+date_map_month <- mdy_hms(data_map_month$Date.Time, tz="America/New_York")
+# Add a new column into the data set.
+data_map_month$month <- month(date_map_month)
+head(data_map_month)
+```
+
+# Task 2.2 - Figure
+```{r}
+# Use geom_point function to draw points on the map.
+ggmap(map0) + 
+  geom_point(data=data_map_month, aes(x = data_map_month$Lon, y = data_map_month$Lat), color="#5555FF", size=0.1) + 
+  facet_wrap(~month) +
+  labs(title="Task 2.2 Figure", subtitle="Uber Pick Up Location in Different Months")
+```
+
+#Task 2.3 - Data Manipulation
+```{r}
+# Because of the efficacy of laptop, I just use April data to establish this figure
+data_map_hour <- d1
+# Transfer the column which contains the date text into the date format.
+date_map_hour <- mdy_hms(data_map_hour$Date.Time, tz="America/New_York")
+# Use hour function to get the hour value into the new column of the data set.
+data_map_hour$hour <- hour(date_map_hour)
+head(data_map_hour)
+```
+
+# Task 2.3 - Figure
+```{r}
+map0 <- get_map(location ="NewYork", zoom = 9)
+# Use geom_point function to draw points on the map.
+ggmap(map0) + 
+  geom_point(data=data_map_hour, aes(x = data_map_hour$Lon, y = data_map_hour$Lat ), color="#5555FF", size=0.1) + 
+  facet_wrap(~hour, ncol=8) +
+  labs(title="Task 2.3 Figure", subtitle="Uber Pick Up Location in Different Hours")
+```
+
+#Task 3.1
+```{r}
+# Show the original data
+mtcars
+# Transfer the data into matrix format
+mtcars_matrix <- as.matrix(mtcars)
+# Given a matrix or data.frame x, t returns the transpose of x.
+mtcars_matrix_t <- t(mtcars_matrix)
+
+# Get the cosine similarity of data set
+cosine_ratings = cosine(mtcars_matrix_t)
+cosine_ratings
+```
+
+#Task 3.2
+```{r}
+# Put the cosine_ratings into a data frame
+cosine_ratings = as.data.frame(cosine_ratings)
+
+# Get the names from cosine_ratings
+car_name <- row.names(cosine_ratings)
+car_name
+
+# Use lapply function to go through whole data set, and check the value to get the maxmum which is also smaller than 1. Finally, put the result into a list.
+highest_similarity_index <- lapply(as.data.frame(cosine_ratings), function(x) { which(x == max(x[which(x < 1)]))}) %>% unlist
+highest_similarity_index
+
+# Use pipleline to contentenate three steps:
+# 1. Put data into a data frame and give them names
+# 2. Use mutate to add a new column into the data frame from step1
+# 3. Use select to choose the column that we need to show.
+result <- data.frame(car_name = row.names(mtcars), highest_similarity_index= highest_similarity_index) %>% 
+    mutate(., highest_similarity_car_name = car_name[highest_similarity_index]) %>% 
+    select(., car_name, highest_similarity_car_name)
+result
+```
+
+
