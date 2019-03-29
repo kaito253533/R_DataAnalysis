@@ -52,6 +52,7 @@ data$day <- wday(date, label = TRUE)
 
 # Use table funtion to get frequency for every day of week
 result <- table(data$day)
+
 # Put the result into a data frame to estiblish a figure
 df_result <- data.frame(result)
 # Name the df_result.
@@ -120,6 +121,9 @@ ggplot(df_result_hour, aes(x=df_result_hour$Hour, y=df_result_hour$Frequency, fi
 # Because of the efficacy of laptop, I just use April data to establish this figure
 data_map <- d1
 # Use get_map function to initiate a map with zoom = 8, for showing the clearer result, although there is a missing value.
+library(ggmap)
+require(ggmap)
+register_google(key = "YOUR KEY")
 map0 <- get_map(location ="NewYork", zoom = 8)
 # Put all data on the map in terms of longitude and latitude. 
 ggmap(map0) + 
